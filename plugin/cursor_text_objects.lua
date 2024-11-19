@@ -30,7 +30,7 @@ local function _map(keys, mode, direction)
     end, { expr = true, silent = true })
 end
 
-_map("[", "o", "up")
-_map("]", "o", "down")
-_map("[", "x", "up")
-_map("]", "x", "down")
+_map("<Plug>(cursor-text-objects-up)", "o", "up")
+_map("<Plug>(cursor-text-objects-down)", "o", "down")
+_map("<Plug>(cursor-text-objects-up)", "x", "up")
+_map("<Plug>(cursor-text-objects-down)", "x", "down")

@@ -6,8 +6,7 @@ Notable changes since CursorTextObjects 1.0
 ===============================================================================
 NEW FEATURES                                     *cursor-text-objects-new-features*
 
-- Added llscheck.yml - A GitHub workflow that detects type annotation issues!
-- Added urlchecker.yml - A GitHub workflow that finds broken URLs!
+- Added default `<Plug>` mappings
 
 
 ===============================================================================
