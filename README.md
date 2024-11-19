@@ -76,6 +76,15 @@ Give your right-pinky a workout and install `cursor-text-objects.nvim` today!
 ```lua
 {
     "ColinKennedy/cursor-text-objects.nvim",
+    config = function()
+        local down_description = "Operate from your current cursor to the end of some text-object."
+        local up_description = "Operate from the start of some text-object to your current cursor."
+
+        vim.keymap.set("o", "[", "<Plug>(cursor-text-objects-up)", { desc = up_description })
+        vim.keymap.set("o", "]", "<Plug>(cursor-text-objects-down)", { desc = down_description })
+        vim.keymap.set("x", "[", "<Plug>(cursor-text-objects-up)", { desc = up_description })
+        vim.keymap.set("x", "]", "<Plug>(cursor-text-objects-down)", { desc = down_description })
+    end,
     version = "v1.*",
 }
 ```
@@ -116,7 +125,8 @@ https://github.com/ColinKennedy/cursor-text-objects.nvim/commits/main/doc/news.t
 
 
 # Other Plugins
-This template is full of various features. But if your plugin is only meant to
-be a simple plugin and you don't want the bells and whistles that this template
-provides, consider instead using
-[nvim-cursor-text-object](https://github.com/ellisonleao/nvim-plugin-template)
+This plugin is a sort-of successor to [vim-ninja-feet](https://github.com/tommcdo/vim-ninja-feet) with some notable differences
+
+- visual mode support
+- better edge-case handling
+- (IMO) better documenting what the code does / how it works

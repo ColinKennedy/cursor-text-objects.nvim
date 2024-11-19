@@ -8,7 +8,7 @@
 ---@param buffer number # A 1-or-more identifier for the Vim buffer.
 ---@return string # The text in `buffer`.
 ---
-local function get_lines(buffer)
+local function _get_lines(buffer)
     return vim.fn.join(vim.api.nvim_buf_get_lines(buffer, 0, -1, false), "\n")
 end
 
@@ -16,8 +16,16 @@ end
 ---
 ---@param keys string Some command to run. e.g. `d]ap`.
 ---
-local function call_command(keys)
+local function _call_command(keys)
     vim.cmd("normal " .. keys)
+end
+
+--- Add mappings for unittests.
+local function _initialize_mappings()
+    vim.keymap.set("o", "[", "<Plug>(cursor-text-objects-up)")
+    vim.keymap.set("o", "]", "<Plug>(cursor-text-objects-down)")
+    vim.keymap.set("x", "[", "<Plug>(cursor-text-objects-up)")
+    vim.keymap.set("x", "]", "<Plug>(cursor-text-objects-down)")
 end
 
 --- Create a new Vim buffer with `text` contents.
@@ -27,7 +35,7 @@ end
 ---@return number # A 1-or-more identifier for the Vim buffer.
 ---@return number # A 1-or-more identifier for the Vim window.
 ---
-local function make_buffer(text, file_type)
+local function _make_buffer(text, file_type)
     local buffer = vim.api.nvim_create_buf(false, false)
     vim.api.nvim_set_current_buf(buffer)
 
@@ -40,6 +48,14 @@ local function make_buffer(text, file_type)
     return buffer, vim.api.nvim_get_current_win()
 end
 
+--- Remove any the default mappings that were added from `_initialize_mappings`.
+local function _revert_mappings()
+    vim.keymap.del("o", "[")
+    vim.keymap.del("o", "]")
+    vim.keymap.del("x", "[")
+    vim.keymap.del("x", "]")
+end
+
 --- Make sure `input` becomes `expected` when `keys` are called.
 ---
 ---@param cursor {[1]: number, [2]: number} The row & column position. (row=1-or-more, column=0-or-more).
@@ -47,13 +63,13 @@ end
 ---@param input string The buffer's original text.
 ---@param expected string The text that we expect to get after calling `keys`.
 ---
-local function run_simple_test(cursor, keys, input, expected)
-    local buffer, window = make_buffer(input)
+local function _run_simple_test(cursor, keys, input, expected)
+    local buffer, window = _make_buffer(input)
     vim.api.nvim_win_set_cursor(window, cursor)
 
-    call_command(keys)
+    _call_command(keys)
 
-    assert.same(expected, get_lines(buffer))
+    assert.same(expected, _get_lines(buffer))
 end
 
 --- Initialize 'commentstring' so `:help gc` related tests work as expected.
@@ -61,13 +77,16 @@ end
 ---@param text string The template for creating comments. e.g. `"# %s"`.
 ---@param buffer number A 0-or-more Vim buffer ID.
 ---
-local function set_commentstring(text, buffer)
+local function _set_commentstring(text, buffer)
     vim.api.nvim_set_option_value("commentstring", text, { buf = buffer })
 end
 
 describe("basic", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     it("works with inner count", function()
-        run_simple_test(
+        _run_simple_test(
             { 2, 0 },
             "d]2ap",
             [[
@@ -89,7 +108,7 @@ describe("basic", function()
     end)
 
     it("works with outer count", function()
-        run_simple_test(
+        _run_simple_test(
             { 2, 0 },
             "2d]ap",
             [[
@@ -112,9 +131,12 @@ describe("basic", function()
 end)
 
 describe(":help c", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("down", function()
         it("works cap", function()
-            run_simple_test(
+            _run_simple_test(
                 { 2, 0 },
                 "c]ap",
                 [[
@@ -136,7 +158,7 @@ describe(":help c", function()
         end)
 
         it("works ca}", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "c]a}",
                 [[
@@ -170,7 +192,7 @@ describe(":help c", function()
 
     describe("up", function()
         it("works cap", function()
-            run_simple_test(
+            _run_simple_test(
                 { 7, 0 },
                 "c[ap",
                 [[
@@ -196,7 +218,7 @@ describe(":help c", function()
         end)
 
         it("works ca}", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "c[a}",
                 [[
@@ -234,9 +256,12 @@ describe(":help c", function()
 end)
 
 describe(":help d", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("down", function()
         it("works with da)", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]a)",
                 [[
@@ -268,7 +293,7 @@ describe(":help d", function()
         end)
 
         it("works with da]", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]a]",
                 [[
@@ -300,7 +325,7 @@ describe(":help d", function()
         end)
 
         it("works with da}", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]a}",
                 [[
@@ -332,7 +357,7 @@ describe(":help d", function()
         end)
 
         it("works with dap - 3 paragraphs", function()
-            run_simple_test(
+            _run_simple_test(
                 { 4, 0 },
                 "d]ap",
                 [[
@@ -354,7 +379,7 @@ describe(":help d", function()
         end)
 
         it("works with dap", function()
-            run_simple_test(
+            _run_simple_test(
                 { 2, 0 },
                 "d]ap",
                 [[
@@ -375,7 +400,7 @@ describe(":help d", function()
         end)
 
         it("works with das", function()
-            run_simple_test(
+            _run_simple_test(
                 { 1, 28 },
                 "d]as",
                 [[
@@ -390,7 +415,7 @@ describe(":help d", function()
         end)
 
         it("works with dat", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]at",
                 [[
@@ -410,7 +435,7 @@ describe(":help d", function()
         end)
 
         it("works with di)", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]i)",
                 [[
@@ -439,7 +464,7 @@ describe(":help d", function()
         end)
 
         it("works with di]", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]i]",
                 [[
@@ -468,7 +493,7 @@ describe(":help d", function()
         end)
 
         it("works with di}", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]i}",
                 [[
@@ -497,7 +522,7 @@ describe(":help d", function()
         end)
 
         it("works with dip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 2, 0 },
                 "d]ip",
                 [[
@@ -519,7 +544,7 @@ describe(":help d", function()
         end)
 
         it("works with dis", function()
-            run_simple_test(
+            _run_simple_test(
                 { 1, 22 },
                 "d]is",
                 "some sentences. With text and stuff\nmultiple lines\nother code",
@@ -528,7 +553,7 @@ describe(":help d", function()
         end)
 
         it("works with dit", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d]it",
                 [[
@@ -551,11 +576,11 @@ describe(":help d", function()
     describe("single-line", function()
         describe("left", function()
             it("works with daW", function()
-                run_simple_test({ 1, 11 }, "d[aW", "sometext.morethings", "rethings")
+                _run_simple_test({ 1, 11 }, "d[aW", "sometext.morethings", "rethings")
             end)
 
             it("works with das", function()
-                run_simple_test(
+                _run_simple_test(
                     { 1, 19 },
                     "d[as",
                     "some sentences. With text and stuff. other code",
@@ -564,19 +589,19 @@ describe(":help d", function()
             end)
 
             it("works with daw", function()
-                run_simple_test({ 1, 2 }, "d[aw", "sometext.morethings", "metext.morethings")
+                _run_simple_test({ 1, 2 }, "d[aw", "sometext.morethings", "metext.morethings")
             end)
 
             it("works with da[", function()
-                run_simple_test({ 1, 15 }, "d[a[", "some text [ inner text ] t", "some text er text ] t")
+                _run_simple_test({ 1, 15 }, "d[a[", "some text [ inner text ] t", "some text er text ] t")
             end)
 
             it("works with da{", function()
-                run_simple_test({ 1, 15 }, "d[a{", "some text { inner text }   ", "some text er text }   ")
+                _run_simple_test({ 1, 15 }, "d[a{", "some text { inner text }   ", "some text er text }   ")
             end)
 
             it("works with dis", function()
-                run_simple_test(
+                _run_simple_test(
                     { 1, 23 },
                     "d[is",
                     "some sentences. With text and stuff. other code",
@@ -585,44 +610,44 @@ describe(":help d", function()
             end)
 
             it("works with di[", function()
-                run_simple_test({ 1, 15 }, "d[i[", "some text [ inner text ]   ", "some text [er text ]   ")
+                _run_simple_test({ 1, 15 }, "d[i[", "some text [ inner text ]   ", "some text [er text ]   ")
             end)
 
             it("works with di{", function()
-                run_simple_test({ 1, 15 }, "d[i{", "some text { inner text }   ", "some text {er text }   ")
+                _run_simple_test({ 1, 15 }, "d[i{", "some text { inner text }   ", "some text {er text }   ")
             end)
         end)
 
         describe("right", function()
             it("works with daW", function()
-                run_simple_test({ 1, 2 }, "d]aW", "sometext.morethings", "so")
+                _run_simple_test({ 1, 2 }, "d]aW", "sometext.morethings", "so")
             end)
 
             it("works with daw", function()
-                run_simple_test({ 1, 2 }, "d]aw", "sometext.morethings", "so.morethings")
+                _run_simple_test({ 1, 2 }, "d]aw", "sometext.morethings", "so.morethings")
             end)
 
             it("works with da]", function()
-                run_simple_test({ 1, 15 }, "d]a]", "some text [ inner text ]   ", "some text [ inn   ")
+                _run_simple_test({ 1, 15 }, "d]a]", "some text [ inner text ]   ", "some text [ inn   ")
             end)
 
             it("works with da}", function()
-                run_simple_test({ 1, 15 }, "d]a}", "some text { inner text }   ", "some text { inn   ")
+                _run_simple_test({ 1, 15 }, "d]a}", "some text { inner text }   ", "some text { inn   ")
             end)
 
             it("works with di]", function()
-                run_simple_test({ 1, 15 }, "d]i]", "some text [ inner text ]   ", "some text [ inn]   ")
+                _run_simple_test({ 1, 15 }, "d]i]", "some text [ inner text ]   ", "some text [ inn]   ")
             end)
 
             it("works with di}", function()
-                run_simple_test({ 1, 15 }, "d[i}", "some text { inner text }   ", "some text {er text }   ")
+                _run_simple_test({ 1, 15 }, "d[i}", "some text { inner text }   ", "some text {er text }   ")
             end)
         end)
     end)
 
     describe("up", function()
         it("works with da)", function()
-            run_simple_test(
+            _run_simple_test(
                 { 7, 0 },
                 "d[a)",
                 [[
@@ -655,7 +680,7 @@ describe(":help d", function()
         end)
 
         it("works with da]", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 22 },
                 "d[a]",
                 [[
@@ -690,7 +715,7 @@ describe(":help d", function()
         end)
 
         it("works with da}", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 24 },
                 "d[a}",
                 [[
@@ -725,7 +750,7 @@ describe(":help d", function()
         end)
 
         it("works with dat", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d[at",
                 [[
@@ -746,7 +771,7 @@ describe(":help d", function()
         end)
 
         it("works with dap", function()
-            run_simple_test(
+            _run_simple_test(
                 { 7, 0 },
                 "d[ap",
                 [[
@@ -771,7 +796,7 @@ describe(":help d", function()
         end)
 
         it("works with di)", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d[i)",
                 [[
@@ -806,7 +831,7 @@ describe(":help d", function()
         end)
 
         it("works with di]", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d[i]",
                 [[
@@ -841,7 +866,7 @@ describe(":help d", function()
         end)
 
         it("works with di}", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d[i}",
                 [[
@@ -876,7 +901,7 @@ describe(":help d", function()
         end)
 
         it("works with dip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 2, 23 },
                 "d[ip",
                 [[
@@ -899,7 +924,7 @@ describe(":help d", function()
         end)
 
         it("works with dis", function()
-            run_simple_test(
+            _run_simple_test(
                 { 1, 19 },
                 "d[is",
                 "some sentences. With text and stuff. other code",
@@ -908,7 +933,7 @@ describe(":help d", function()
         end)
 
         it("works with dit - 001", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 0 },
                 "d[it",
                 [[
@@ -930,7 +955,7 @@ describe(":help d", function()
         end)
 
         it("works with dit - 002 - Include characters", function()
-            run_simple_test(
+            _run_simple_test(
                 { 3, 23 },
                 "d[it",
                 [[
@@ -953,9 +978,12 @@ describe(":help d", function()
 end)
 
 describe(":help gU", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("down", function()
         it("works with gUip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 5, 0 },
                 "gU]ip",
                 [[
@@ -984,7 +1012,7 @@ describe(":help gU", function()
 
     describe("up", function()
         it("works with gUip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 5, 0 },
                 "gU[ip",
                 [[
@@ -1013,9 +1041,12 @@ describe(":help gU", function()
 end)
 
 describe(":help gc", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("down", function()
         it("works with gcip", function()
-            local buffer, window = make_buffer(
+            local buffer, window = _make_buffer(
                 [[
                 def foo() -> None:
                     """Some function."""  <-- NOTE: The cursor will be set here
@@ -1027,9 +1058,9 @@ describe(":help gc", function()
                 "python"
             )
             vim.api.nvim_win_set_cursor(window, { 2, 0 })
-            set_commentstring("# %s", buffer)
+            _set_commentstring("# %s", buffer)
 
-            call_command("gc]ip")
+            _call_command("gc]ip")
 
             assert.same(
                 [[
@@ -1040,14 +1071,14 @@ describe(":help gc", function()
                     for _ in range(10):
                         print("stuff")
                 ]],
-                get_lines(buffer)
+                _get_lines(buffer)
             )
         end)
     end)
 
     describe("up", function()
         it("works with gcip", function()
-            local buffer, window = make_buffer(
+            local buffer, window = _make_buffer(
                 [[
                 def foo() -> None:
                     """Some function."""  <-- NOTE: The cursor will be set here
@@ -1059,9 +1090,9 @@ describe(":help gc", function()
                 "python"
             )
             vim.api.nvim_win_set_cursor(window, { 2, 0 })
-            set_commentstring("# %s", buffer)
+            _set_commentstring("# %s", buffer)
 
-            call_command("gc[ip")
+            _call_command("gc[ip")
 
             assert.same(
                 [[
@@ -1072,16 +1103,19 @@ describe(":help gc", function()
                     for _ in range(10):
                         print("stuff")
                 ]],
-                get_lines(buffer)
+                _get_lines(buffer)
             )
         end)
     end)
 end)
 
 describe(":help gu", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("down", function()
         it("works with guip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 5, 0 },
                 "gu]ip",
                 [[
@@ -1110,7 +1144,7 @@ describe(":help gu", function()
 
     describe("up", function()
         it("works with guip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 5, 0 },
                 "gu[ip",
                 [[
@@ -1139,9 +1173,12 @@ describe(":help gu", function()
 end)
 
 describe(":help g~", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("down", function()
         it("works with g~ip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 5, 0 },
                 "g~]ip",
                 [[
@@ -1170,7 +1207,7 @@ describe(":help g~", function()
 
     describe("up", function()
         it("works with g~ip", function()
-            run_simple_test(
+            _run_simple_test(
                 { 5, 0 },
                 "g~[ip",
                 [[
@@ -1199,9 +1236,12 @@ describe(":help g~", function()
 end)
 
 describe(":help y", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("down", function()
         it("works with yap", function()
-            local _, window = make_buffer([[
+            local _, window = _make_buffer([[
                 aaaa
                 bbbb  <-- NOTE: The cursor will be set here
                     cccc
@@ -1213,7 +1253,7 @@ describe(":help y", function()
                 ]])
             vim.api.nvim_win_set_cursor(window, { 2, 0 })
 
-            call_command("y]ap")
+            _call_command("y]ap")
 
             assert.same(
                 [[
@@ -1228,7 +1268,7 @@ describe(":help y", function()
 
     describe("up", function()
         it("works with yap", function()
-            local _, window = make_buffer([[
+            local _, window = _make_buffer([[
                 aaaa
                 bbbb  <-- NOTE: The cursor will be set here
                     cccc
@@ -1240,7 +1280,7 @@ describe(":help y", function()
                 ]])
             vim.api.nvim_win_set_cursor(window, { 2, 0 })
 
-            call_command("y[ap")
+            _call_command("y[ap")
 
             assert.same(
                 "                aaaa\n                bbbb  <-- NOTE: The cursor will be set here\n",
@@ -1251,10 +1291,13 @@ describe(":help y", function()
 end)
 
 describe("marks", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     describe("marks - '", function()
         describe("down", function()
             it("works with yank", function()
-                local buffer, window = make_buffer([[
+                local buffer, window = _make_buffer([[
                     aaaa
                     bbbb  <-- NOTE: The cursor will be set here
                         cccc
@@ -1268,7 +1311,7 @@ describe("marks", function()
 
                 vim.api.nvim_buf_set_mark(buffer, "b", 6, 18, {})
 
-                call_command("y]'b")
+                _call_command("y]'b")
 
                 assert.same(
                     [[
@@ -1285,7 +1328,7 @@ describe("marks", function()
 
         describe("up", function()
             it("works with yank", function()
-                local buffer, window = make_buffer([[
+                local buffer, window = _make_buffer([[
                     aaaa
                     bbbb
                         cccc
@@ -1299,7 +1342,7 @@ describe("marks", function()
 
                 vim.api.nvim_buf_set_mark(buffer, "b", 2, 19, {})
 
-                call_command("y['b")
+                _call_command("y['b")
 
                 assert.same(
                     [[
@@ -1318,7 +1361,7 @@ describe("marks", function()
     describe("marks - `", function()
         describe("down", function()
             it("works with yank", function()
-                local buffer, window = make_buffer([[
+                local buffer, window = _make_buffer([[
                     aaaa
                     bbbb  <-- NOTE: The cursor will be set here
                         cccc
@@ -1332,7 +1375,7 @@ describe("marks", function()
 
                 vim.api.nvim_buf_set_mark(buffer, "b", 6, 22, {})
 
-                call_command("y]`b")
+                _call_command("y]`b")
 
                 assert.same(
                     [[bb  <-- NOTE: The cursor will be set here
@@ -1347,7 +1390,7 @@ describe("marks", function()
 
         describe("up", function()
             it("works with yank", function()
-                local buffer, window = make_buffer([[
+                local buffer, window = _make_buffer([[
                     aaaa
                     bbbb
                         cccc
@@ -1361,7 +1404,7 @@ describe("marks", function()
 
                 vim.api.nvim_buf_set_mark(buffer, "b", 2, 23, {})
 
-                call_command("y[`b")
+                _call_command("y[`b")
 
                 assert.same(
                     [[b
@@ -1377,8 +1420,11 @@ describe("marks", function()
 end)
 
 describe("scenario", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
     it("works with a curly function - da{", function()
-        run_simple_test(
+        _run_simple_test(
             { 3, 0 },
             "d[a{",
             vim.fn.join({
@@ -1393,7 +1439,7 @@ describe("scenario", function()
     end)
 
     it("works with a curly function - di{", function()
-        run_simple_test(
+        _run_simple_test(
             { 3, 0 },
             "d[i{",
             [[
