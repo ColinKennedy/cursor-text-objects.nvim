@@ -41,7 +41,7 @@ jobs:
 
     - name: build
       run: |
-        luarocks test plugin-template-scm-1.rockspec --prepare
+        luarocks test cursor-text-objects-scm-1.rockspec --prepare
 
     - name: test
       run: |
