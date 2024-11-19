@@ -1,5 +1,5 @@
 rockspec_format = "3.0"
-package = "plugin-template"
+package = "cursor-text-objects"
 version = "scm-1"
 
 local user = "ColinKennedy"

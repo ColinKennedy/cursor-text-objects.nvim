@@ -1,24 +1,24 @@
-*plugin-template.txt*     For Neovim >= 0.8.0    Last change: 2024 November 13
+*cursor-text-objects.txt*     For Neovim >= 0.8.0    Last change: 2024 November 13
 
 ==============================================================================
-Table of Contents                          *plugin-template-table-of-contents*
+Table of Contents                          *cursor-text-objects-table-of-contents*
 
-1. A Neovim Plugin Template         |plugin-template-a-neovim-plugin-template|
-2. Features                                         |plugin-template-features|
-3. Using This Template                   |plugin-template-using-this-template|
-4. Installation                                 |plugin-template-installation|
-5. Configuration                               |plugin-template-configuration|
-  - Lualine                            |plugin-template-configuration-lualine|
-  - Telescope                        |plugin-template-configuration-telescope|
-6. Commands                                         |plugin-template-commands|
-7. Tests                                               |plugin-template-tests|
-  - Initialization                      |plugin-template-tests-initialization|
-  - Running                                    |plugin-template-tests-running|
-8. Tracking Updates                         |plugin-template-tracking-updates|
-9. Other Plugins                               |plugin-template-other-plugins|
+1. A Neovim Plugin Template         |cursor-text-objects-a-neovim-plugin-template|
+2. Features                                         |cursor-text-objects-features|
+3. Using This Template                   |cursor-text-objects-using-this-template|
+4. Installation                                 |cursor-text-objects-installation|
+5. Configuration                               |cursor-text-objects-configuration|
+  - Lualine                            |cursor-text-objects-configuration-lualine|
+  - Telescope                        |cursor-text-objects-configuration-telescope|
+6. Commands                                         |cursor-text-objects-commands|
+7. Tests                                               |cursor-text-objects-tests|
+  - Initialization                      |cursor-text-objects-tests-initialization|
+  - Running                                    |cursor-text-objects-tests-running|
+8. Tracking Updates                         |cursor-text-objects-tracking-updates|
+9. Other Plugins                               |cursor-text-objects-other-plugins|
 
 ==============================================================================
-1. A Neovim Plugin Template         *plugin-template-a-neovim-plugin-template*
+1. A Neovim Plugin Template         *cursor-text-objects-a-neovim-plugin-template*
 
   --------------------------------------------------------------------------------
             
@@ -34,20 +34,17 @@ A template repository used to create Neovim plugins.
 
 
 ==============================================================================
-2. Features                                         *plugin-template-features*
+2. Features                                         *cursor-text-objects-features*
 
 - Follows nvim-best-practices <https://github.com/nvim-neorocks/nvim-best-practices>
 - Fast start-up (~1 ms)
-- Auto-release to luarocks <https://luarocks.org> & GitHub <https://github.com/ColinKennedy/nvim-best-practices-plugin-template/releases>
 - Automated user documentation (using panvimdoc <https://github.com/kdheepak/panvimdoc>)
 - Automated API documentation (using mini.doc <https://github.com/echasnovski/mini.doc>)
 - Vimtags generation
 - Built-in Vim commands
 - A high quality command mode parser
 - Auto-completes your commands at any cursor position
-- No external dependencies <https://github.com/ColinKennedy/nvim-best-practices-plugin-template/wiki/External-Dependencies-Disclaimer>
 - LuaCATS <https://luals.github.io/wiki/annotations/>annotations and type-hints, everywhere
-- RSS feed support <https://github.com/ColinKennedy/nvim-best-practices-plugin-template/commits/main/doc/news.txt.atom>
 - Built-in logging to stdout / files
 - Unittests use the full power of native busted <https://github.com/lunarmodules/busted>
 - Automated testing matrix supports 6 Neovim/OS combinations
@@ -64,28 +61,25 @@ A template repository used to create Neovim plugins.
     - llscheck <https://github.com/jeffzi/llscheck> - Checks for Lua type mismatches
     - luacheck <https://github.com/mpeterv/luacheck> - Checks for Lua code issues
     - luarocks <https://luarocks.org> auto-release (LUAROCKS_API_KEY secret <https://github.com/nvim-neorocks/sample-luarocks-plugin?tab=readme-ov-file#publishing-to-luarocks> configuration required)
-    - GitHub <https://github.com/ColinKennedy/nvim-best-practices-plugin-template/releases> auto-release (PERSONAL_ACCESS_TOKEN secret <https://github.com/nvim-neorocks/sample-luarocks-plugin?tab=readme-ov-file#installing-release-please-recommended> configuration required)
     - mini.doc <https://github.com/echasnovski/mini.doc> - API documentation auto-generator
     - panvimdoc <https://github.com/kdheepak/panvimdoc> - User documentation auto-generator
     - urlchecker <https://github.com/urlstechie/urlchecker-action> - Checks for broken URL links
-    - PR reviews - Reminds users to update `doc/news.txt`
 
 
 ==============================================================================
-3. Using This Template                   *plugin-template-using-this-template*
+3. Using This Template                   *cursor-text-objects-using-this-template*
 
-1. Follow the Wiki instructions <https://github.com/ColinKennedy/nvim-best-practices-plugin-template/wiki/Using-This-Template>
 2. Once you’re done, remove this section (the rest of this README.md file should be kept / customized to your needs)
 
 
 ==============================================================================
-4. Installation                                 *plugin-template-installation*
+4. Installation                                 *cursor-text-objects-installation*
 
 - lazy.nvim <https://github.com/folke/lazy.nvim>
 
 >lua
     {
-        "ColinKennedy/nvim-best-practices-plugin-template",
+        "ColinKennedy/cursor-text-objects.nvim",
         -- TODO: (you) - Make sure your first release matches v1.0.0 so it auto-releases!
         version = "v1.*",
     }
@@ -93,7 +87,7 @@ A template repository used to create Neovim plugins.
 
 
 ==============================================================================
-5. Configuration                               *plugin-template-configuration*
+5. Configuration                               *cursor-text-objects-configuration*
 
 (These are default values)
 
@@ -101,9 +95,9 @@ A template repository used to create Neovim plugins.
 
 >lua
     {
-        "ColinKennedy/nvim-best-practices-plugin-template",
+        "ColinKennedy/cursor-text-objects.nvim",
         config = function()
-            vim.g.plugin_template_configuration = {
+            vim.g.cursor_text_objects_configuration = {
                 cmdparse = {
                     auto_complete = { display = { help_flag = true } },
                 },
@@ -153,11 +147,11 @@ A template repository used to create Neovim plugins.
 <
 
 
-LUALINE                                *plugin-template-configuration-lualine*
+LUALINE                                *cursor-text-objects-configuration-lualine*
 
 
   Note: You can customize lualine colors here or using
-  `vim.g.plugin_template_configuration`.
+  `vim.g.cursor_text_objects_configuration`.
 lualine.nvim <https://github.com/nvim-lualine/lualine.nvim>
 
 >lua
@@ -166,7 +160,7 @@ lualine.nvim <https://github.com/nvim-lualine/lualine.nvim>
             lualine_y = {
                 -- ... Your other configuration ...
                 {
-                    "plugin_template",
+                    "cursor_text_objects",
                     -- NOTE: These will override default values
                     -- display = {
                     --     goodnight_moon = {color={fg="#FFFFFF"}, text="Custom message 1"}},
@@ -179,11 +173,11 @@ lualine.nvim <https://github.com/nvim-lualine/lualine.nvim>
 <
 
 
-TELESCOPE                            *plugin-template-configuration-telescope*
+TELESCOPE                            *cursor-text-objects-configuration-telescope*
 
 
   Note: You can customize telescope colors here or using
-  `vim.g.plugin_template_configuration`.
+  `vim.g.cursor_text_objects_configuration`.
 telescope.nvim <https://github.com/nvim-telescope/telescope.nvim>
 
 >lua
@@ -192,10 +186,10 @@ telescope.nvim <https://github.com/nvim-telescope/telescope.nvim>
         cmd = "Telescope",
         config = function()
             -- ... Your other configuration ...
-            require("telescope").load_extension("plugin_template")
+            require("telescope").load_extension("cursor_text_objects")
         end,
         dependencies = {
-            "ColinKennedy/nvim-best-practices-plugin-template",
+            "ColinKennedy/cursor-text-objects.nvim",
             "nvim-lua/plenary.nvim",
         },
         version = "0.1.*",
@@ -207,43 +201,43 @@ COLORS ~
 
 This plugin provides two default highlights
 
-- `PluginTemplateTelescopeEntry`
-- `PluginTemplateTelescopeSecondary`
+- `CursorTextObjectsTelescopeEntry`
+- `CursorTextObjectsTelescopeSecondary`
 
 Both come with default colors that should look nice. If you want to change
 them, here’s how:
 
 >lua
-    vim.api.nvim_set_hl(0, "PluginTemplateTelescopeEntry", {link="Statement"})
-    vim.api.nvim_set_hl(0, "PluginTemplateTelescopeSecondary", {link="Question"})
+    vim.api.nvim_set_hl(0, "CursorTextObjectsTelescopeEntry", {link="Statement"})
+    vim.api.nvim_set_hl(0, "CursorTextObjectsTelescopeSecondary", {link="Question"})
 <
 
 
 ==============================================================================
-6. Commands                                         *plugin-template-commands*
+6. Commands                                         *cursor-text-objects-commands*
 
 Here are some example commands:
 
 >vim
     " A typical subcommand
-    :PluginTemplate hello-world say phrase "Hello, World!" " How are you?"
-    :PluginTemplate hello-world say phrase "Hello, World!" --repeat=2 --style=lowercase
+    :CursorTextObjects hello-world say phrase "Hello, World!" " How are you?"
+    :CursorTextObjects hello-world say phrase "Hello, World!" --repeat=2 --style=lowercase
     
     " An example of a flag this repeatable and 3 flags, -a, -b, -c, as one dash
-    :PluginTemplate arbitrary-thing -vvv -abc -f
+    :CursorTextObjects arbitrary-thing -vvv -abc -f
     
     " Separate commands with completely separate, flexible APIs
-    :PluginTemplate goodnight-moon count-sheep 42
-    :PluginTemplate goodnight-moon read "a book"
-    :PluginTemplate goodnight-moon sleep -z -z -z
+    :CursorTextObjects goodnight-moon count-sheep 42
+    :CursorTextObjects goodnight-moon read "a book"
+    :CursorTextObjects goodnight-moon sleep -z -z -z
 <
 
 
 ==============================================================================
-7. Tests                                               *plugin-template-tests*
+7. Tests                                               *cursor-text-objects-tests*
 
 
-INITIALIZATION                          *plugin-template-tests-initialization*
+INITIALIZATION                          *cursor-text-objects-tests-initialization*
 
 Run this line once before calling any `busted` command
 
@@ -252,7 +246,7 @@ Run this line once before calling any `busted` command
 <
 
 
-RUNNING                                        *plugin-template-tests-running*
+RUNNING                                        *cursor-text-objects-tests-running*
 
 Run all tests
 
@@ -269,28 +263,5 @@ Run test based on tags
 >sh
     busted --helper spec/minimal_init.lua . --tags=simple
 <
-
-
-==============================================================================
-8. Tracking Updates                         *plugin-template-tracking-updates*
-
-See doc/news.txt <doc/news.txt> for updates.
-
-You can watch this plugin for changes by adding this URL to your RSS feed:
-
->
-    https://github.com/ColinKennedy/nvim-best-practices-plugin-template/commits/main/doc/news.txt.atom
-<
-
-
-==============================================================================
-9. Other Plugins                               *plugin-template-other-plugins*
-
-This template is full of various features. But if your plugin is only meant to
-be a simple plugin and you don’t want the bells and whistles that this
-template provides, consider instead using nvim-plugin-template
-<https://github.com/ellisonleao/nvim-plugin-template>
-
-Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
 
 vim:tw=78:ts=8:noet:ft=help:norl:

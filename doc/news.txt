@@ -1,17 +1,17 @@
-*plugin-template-news.txt*
+*cursor-text-objects-news.txt*
 
-Notable changes since PluginTemplate 1.0
+Notable changes since CursorTextObjects 1.0
 
 
 ===============================================================================
-NEW FEATURES                                     *plugin-template-new-features*
+NEW FEATURES                                     *cursor-text-objects-new-features*
 
 - Added llscheck.yml - A GitHub workflow that detects type annotation issues!
 - Added urlchecker.yml - A GitHub workflow that finds broken URLs!
 
 
 ===============================================================================
-BREAKING CHANGES                                 *plugin-template-new-breaking*
+BREAKING CHANGES                                 *cursor-text-objects-new-breaking*
 
 n/a
 
