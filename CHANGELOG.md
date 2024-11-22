@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.1.0...v1.2.0) (2024-11-22)
+
+
+### Features
+
+* **maps:** added visual support + unittests ([c78aed9](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/c78aed9376c29ff54c5a16ae5742b680602ef4e6))
+
 ## [1.1.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.0.0...v1.1.0) (2024-11-19)
 
 
