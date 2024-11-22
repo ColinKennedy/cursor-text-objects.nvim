@@ -9,13 +9,15 @@
 local M = {}
 
 local _Direction = { down = "down", up = "up" }
-
-local unpack = unpack or table.unpack -- Future Lua versions use table.unpack
+local _DirectionMark = { down = "]", up = "[" }
+local _PositionType = { character_wise = "`", line_wise = "'" }
 
 local _CURSOR
 local _DIRECTION
 local _OPERATOR
 local _OPERATOR_FUNCTION
+
+local unpack = unpack or table.unpack -- Future Lua versions use table.unpack
 
 --- Check if the operatorfunc that is running will run on a whole-line.
 ---
@@ -62,7 +64,7 @@ local function _adjust_marks(mode)
     local inclusive_toggle = ""
 
     if _DIRECTION == _Direction.up then
-        direction = "["
+        direction = _DirectionMark.up
 
         if not is_line then
             local buffer, row, column, offset = unpack(vim.fn.getpos("'" .. direction))
@@ -75,7 +77,7 @@ local function _adjust_marks(mode)
             vim.fn.setpos("'" .. direction, { buffer, row, column, offset })
         end
     else
-        direction = "]"
+        direction = _DirectionMark.down
 
         local buffer, row, column, offset = unpack(vim.fn.getpos("'" .. direction))
 
@@ -115,9 +117,38 @@ end
 ---    The caller context. See `:help :map-operator` for details.
 ---
 function M.visual(mode)
-    local _, mark, direction = _adjust_marks(mode)
+    vim.fn.setpos(".", _CURSOR)
 
-    vim.cmd(string.format("normal v%s%s", mark, direction))
+    local mark
+
+    if _is_line_mode(mode) then
+        mark = "'" -- Includes only line information
+    else
+        mark = "`" -- Includes column information
+    end
+
+    local direction
+
+    if _DIRECTION == _Direction.up then
+        direction = _DirectionMark.up
+    else
+        direction = _DirectionMark.down
+    end
+
+    local _, row, column, _ = unpack(vim.fn.getpos("'" .. direction))
+
+    if mark == _PositionType.line_wise then
+        if direction == _DirectionMark.down then
+            column = #vim.fn.getline(row)
+        else
+            column = 0
+        end
+    else
+        column = column - 1
+    end
+
+    vim.cmd("normal v")
+    vim.api.nvim_win_set_cursor(0, { row, column })
 end
 
 --- Remember anything that we will need to recall once we execute `operatorfunc`.

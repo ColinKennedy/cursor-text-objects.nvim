@@ -21,11 +21,17 @@ local function _call_command(keys)
 end
 
 --- Add mappings for unittests.
-local function _initialize_mappings()
-    vim.keymap.set("o", "[", "<Plug>(cursor-text-objects-up)")
-    vim.keymap.set("o", "]", "<Plug>(cursor-text-objects-down)")
-    vim.keymap.set("x", "[", "<Plug>(cursor-text-objects-up)")
-    vim.keymap.set("x", "]", "<Plug>(cursor-text-objects-down)")
+---
+---@param up string? The key(s) to set as the "go the top to the cursor".
+---@param down string? The key(s) to set as the "go from the cursor down".
+---
+local function _initialize_mappings(up, down)
+    up = up or "["
+    down = down or "]"
+    vim.keymap.set("o", up, "<Plug>(cursor-text-objects-up)")
+    vim.keymap.set("o", down, "<Plug>(cursor-text-objects-down)")
+    vim.keymap.set("x", up, "<Plug>(cursor-text-objects-up)")
+    vim.keymap.set("x", down, "<Plug>(cursor-text-objects-down)")
 end
 
 --- Create a new Vim buffer with `text` contents.
@@ -49,11 +55,18 @@ local function _make_buffer(text, file_type)
 end
 
 --- Remove any the default mappings that were added from `_initialize_mappings`.
-local function _revert_mappings()
-    vim.keymap.del("o", "[")
-    vim.keymap.del("o", "]")
-    vim.keymap.del("x", "[")
-    vim.keymap.del("x", "]")
+---
+---@param up string? The key(s) to set as the "go the top to the cursor".
+---@param down string? The key(s) to set as the "go from the cursor down".
+---
+local function _revert_mappings(up, down)
+    up = up or "["
+    down = down or "]"
+
+    vim.keymap.del("o", up)
+    vim.keymap.del("o", down)
+    vim.keymap.del("x", up)
+    vim.keymap.del("x", down)
 end
 
 --- Make sure `input` becomes `expected` when `keys` are called.
@@ -126,6 +139,37 @@ describe("basic", function()
       some text
       last paragraph
       ]]
+        )
+    end)
+end)
+
+describe("custom mappings", function()
+    before_each(function()
+        _initialize_mappings("{", "}")
+    end)
+    after_each(function()
+        _revert_mappings("{", "}")
+    end)
+
+    it("works with keys, not just [ / ]", function()
+        _run_simple_test(
+            { 2, 0 },
+            "c}ap",
+            [[
+    some text
+        more text <-- NOTE: The cursor will be set here
+        even more lines!
+    still part of the paragraph
+
+    another paragraph
+    with text in it
+    ]],
+            [[
+    some text
+
+    another paragraph
+    with text in it
+    ]]
         )
     end)
 end)
@@ -1231,6 +1275,111 @@ describe(":help g~", function()
         fffff
         ]]
             )
+        end)
+    end)
+end)
+
+describe(":help v", function()
+    before_each(_initialize_mappings)
+    after_each(_revert_mappings)
+
+    describe("character-wise", function()
+        describe("down", function()
+            it("works with visual selection", function()
+                local _, window = _make_buffer([[
+                    A paragraph of text and sentences. Here's another sentence
+                    that spans multiple lines  <-- NOTE: The cursor will be set here
+                    but our code should handle it. And lastly.
+                    A sentence that starts on its own line.
+                    ]])
+                vim.api.nvim_win_set_cursor(window, { 2, 23 })
+
+                -- NOTE: We yank the visual selection so we can assert it later
+                _call_command("v]asy")
+
+                assert.same(
+                    [[t spans multiple lines  <-- NOTE: The cursor will be set here
+                    but our code should handle it. ]],
+                    vim.fn.getreg("")
+                )
+            end)
+        end)
+
+        describe("up", function()
+            it("works with visual selection", function()
+                local _, window = _make_buffer([[
+                    A paragraph of text and sentences. Here's another sentence
+                    that spans multiple lines  <-- NOTE: The cursor will be set here
+                    but our code should handle it. And lastly.
+                    A sentence that starts on its own line.
+                    ]])
+                vim.api.nvim_win_set_cursor(window, { 2, 23 })
+
+                -- NOTE: We yank the visual selection so we can assert it later
+                _call_command("v[asy")
+
+                assert.same(
+                    [[Here's another sentence
+                    that]],
+                    vim.fn.getreg("")
+                )
+            end)
+        end)
+    end)
+
+    describe("line-wise", function()
+        describe("down", function()
+            it("works with visual selection", function()
+                local _, window = _make_buffer([[
+                    aaaa
+                    bbbb  <-- NOTE: The cursor will be set here
+                        cccc
+
+                    next
+                    lines
+                        blah
+
+                    ]])
+                vim.api.nvim_win_set_cursor(window, { 2, 0 })
+
+                -- NOTE: We yank the visual selection so we can assert it later
+                _call_command("v]apy")
+
+                assert.same(
+                    [[
+                    bbbb  <-- NOTE: The cursor will be set here
+                        cccc
+
+]],
+                    vim.fn.getreg("")
+                )
+            end)
+        end)
+
+        describe("up", function()
+            it("works with visual selection", function()
+                local _, window = _make_buffer([[
+                    aaaa
+                    bbbb
+                        cccc
+
+                    next
+                    lines  <-- NOTE: The cursor will be set here
+                        blah
+
+                    ]])
+                vim.api.nvim_win_set_cursor(window, { 6, 4 })
+
+                -- NOTE: We yank the visual selection so we can assert it later
+                _call_command("v[apy")
+
+                assert.same(
+                    [[
+                    next
+     ]],
+                    vim.fn.getreg("")
+                )
+            end)
         end)
     end)
 end)
