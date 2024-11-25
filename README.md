@@ -95,6 +95,40 @@ Give your right-pinky a workout and install `cursor-text-objects.nvim` today!
 ```
 
 
+# Disclaimer
+The default recommended mappings, `[` and `]`, will not conflict with existing
+mappings. There's [a test
+script](https://gist.github.com/ColinKennedy/7e632f88570be89762b0ca8372769b72)
+that verifies this.
+
+However if you have another mapping like this:
+
+`vim.keymap.set({'n', 'x', 'o'}, '[i', function() return "dd" end,
+{expr=true})`
+
+then you may be surprised that `d[ip` does not work.
+
+In short while actually this is not a conflict, it can still be confusing for
+a you and you'll want to remap `cursor-text-objects` or that other mapping
+/ plug-in to avoid the issue.
+
+<details>
+<summary>More details on what is going on in this case</summary>
+
+`cursor-text-objects` is a pending operator but the mapping above is a regular
+operator. A pending operator is a mapping that "waits for the user to keep
+typing more keys" but a regular operator executes immediately. So if you only
+have `cursor-text-objects` applied, `ip` is interpreted as "[i]nside
+[p]aragraph". But with the mapping above, `d[i` executes immediately and then
+treats `p` as the start of a new command. And `p` as a standalone keymap means
+[p]ut. (See `:help put` for details).
+
+So again this is all expected behavior but if you don't want that to happen,
+you're better off remapping `[i` to something else.
+
+</details>
+
+
 # Tests
 ## Initialization
 Run this line once before calling any `busted` command
