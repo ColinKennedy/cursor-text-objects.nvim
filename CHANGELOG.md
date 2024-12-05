@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.2.0...v1.3.0) (2024-12-05)
+
+
+### Features
+
+* **dependencies:** removed git submodule requirements ([d395561](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/d395561ba1a9cb158bee82a13781ade8163efdb2))
+
 ## [1.2.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.1.0...v1.2.0) (2024-11-22)
 
 
