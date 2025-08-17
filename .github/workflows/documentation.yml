@@ -6,17 +6,66 @@ on:
       - main
 
 jobs:
-  documentation:
-    name: Documentation
+  check_documentation_branch:
+    name: Check For A Documentation Branch
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.check_branch.outputs.exists }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Check If A Valid Documentation Branch Exists
+        id: check_branch
+        run: |
+          if git ls-remote --exit-code origin refs/heads/gh-pages; then
+            echo "The branch exists"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "The branch does not exist"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+  html_documentation:
+    needs: check_documentation_branch
+    if: needs.check_documentation_branch.outputs.exists == 'true'
+    name: HTML Documentation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - uses: rhysd/action-setup-vim@v1
+      - name: Install emmylua_doc_cli From crates.io
+        uses: baptiste0928/cargo-install@v3
+        with:
+          crate: emmylua_doc_cli
+
+      - name: Generate Mkdocs Files With emmylua_doc_cli
+        run: emmylua_doc_cli --input lua/ --output markdown/generated --mixin markdown/manual
+
+      - name: Deploy To GitHub Pages
+        uses: mhausenblas/mkdocs-deploy-gh-pages@1.26
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: markdown/generated/mkdocs.yml
+
+  vim_documentation:
+    name: Vim Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
           version: stable
+
+      - name: Create API Documentation
+        run: |
+          nvim --version
+          make api-documentation
 
       - name: Create User Documentation
         uses: kdheepak/panvimdoc@main
@@ -31,7 +80,7 @@ jobs:
           nvim -c 'helptags doc' -c 'quit'
 
       - name: Push Changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "docs(vimdoc): Auto-generate user / API documentation + vimtags"
           commit_user_name: "github-actions[bot]"
