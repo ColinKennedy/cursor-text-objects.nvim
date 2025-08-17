@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Ask a question
-    url: https://github.com/ColinKennedy/nvim-best-practices-plugin-template/discussions
+    url: https://github.com/ColinKennedy/cursor-text-objects.nvim/discussions
     about: Use Github discussions instead

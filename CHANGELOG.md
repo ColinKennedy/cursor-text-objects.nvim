@@ -1,36 +1,31 @@
 # Changelog
 
-## [1.3.2](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/compare/v1.3.1...v1.3.2) (2024-11-12)
-
-
-### Bug Fixes
-
-* **luals:** Added missing diagnostics paths ([d5f93ef](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/commit/d5f93ef89c47ae5dd09c684526f7050a0f829e11))
-
-## [1.3.1](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/compare/v1.3.0...v1.3.1) (2024-10-26)
-
-
-### Bug Fixes
-
-* **urlchecker:** Added README.md + CHANGELOG.md as a checker ([a4b7d41](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/commit/a4b7d410f4d853d7bf98e4ca6dc198f6ea29bb8d))
-
-## [1.3.0](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/compare/v1.2.0...v1.3.0) (2024-10-26)
+## [1.3.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.2.0...v1.3.0) (2024-12-05)
 
 
 ### Features
 
-* **ci:** Added urlchecker.yml ([764f485](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/commit/764f4859522c6c810e75bd82eda6073ef4fc0c0c))
+* **dependencies:** removed git submodule requirements ([d395561](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/d395561ba1a9cb158bee82a13781ade8163efdb2))
 
-## [1.2.0](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/compare/v1.1.0...v1.2.0) (2024-10-26)
-
-
-### Features
-
-* **ci:** Enabled llscheck.yml ([18273bf](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/commit/18273bf3526364ca05d2798318b86f59a3c124e8))
-
-## [1.1.0](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/compare/v1.0.3...v1.1.0) (2024-10-26)
+## [1.2.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.1.0...v1.2.0) (2024-11-22)
 
 
 ### Features
 
-* **ci:** Added better GitHub workflows ([da48f5a](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/commit/da48f5a27fb01e9c597d82931e551d10c31b94d0))
+* **maps:** added visual support + unittests ([c78aed9](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/c78aed9376c29ff54c5a16ae5742b680602ef4e6))
+
+## [1.1.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.0.0...v1.1.0) (2024-11-19)
+
+
+### Features
+
+* **keymap:** added &lt;Plug&gt; mappings ([dfad599](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/dfad5996d8e95bbdb33d37e115480a02dd8c219a))
+
+## 1.0.0 (2024-11-19)
+
+
+### Features
+
+* **keymap:** added [ and ] pending operators ([7f28ed8](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/7f28ed8c7cde9eb8155e20444663ae77a1a1142b))
+
+## Changelog

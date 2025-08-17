@@ -6,20 +6,20 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Before** reporting an issue, make sure to read the [documentation](https://github.com/ColinKennedy/nvim-best-practices-plugin-template)
-        and search [existing issues](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/issues) (even the [closed issues](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/issues?q=is%3Aissue+is%3Aclosed))
+        **Before** reporting an issue, make sure to read the [documentation](https://github.com/ColinKennedy/cursor-text-objects.nvim)
+        and search [existing issues](https://github.com/ColinKennedy/cursor-text-objects.nvim/issues) (even the [closed issues](https://github.com/ColinKennedy/cursor-text-objects.nvim/issues?q=is%3Aissue+is%3Aclosed))
 
-        Usage questions such as ***"How do I...?"*** belong in [Discussions](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/discussions) and will be closed.
+        Usage questions such as ***"How do I...?"*** belong in [Discussions](https://github.com/ColinKennedy/cursor-text-objects.nvim/discussions) and will be closed.
   - type: checkboxes
     attributes:
       label: Did you read the documentation and check existing issues?
       description: Make sure you checked and all of the below before submitting an issue
       options:
-        - label: I have read all the [`:help plugin-template`](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/blob/main/doc/my-template-docs.txt) documentation
+        - label: I have read all the [`:help cursor-text-objects`](https://github.com/ColinKennedy/cursor-text-objects.nvim/blob/main/doc/my-template-docs.txt) documentation
           required: true
         - label: I have updated the plugin to the latest version before submitting this issue
           required: true
-        - label: I have searched the [existing issues](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/issues) and [closed issues](https://github.com/ColinKennedy/nvim-best-practices-plugin-template/issues?q=is%3Aissue+is%3Aclosed) issues
+        - label: I have searched the [existing issues](https://github.com/ColinKennedy/cursor-text-objects.nvim/issues) and [closed issues](https://github.com/ColinKennedy/cursor-text-objects.nvim/issues?q=is%3Aissue+is%3Aclosed) issues
           required: true
   - type: input
     attributes:
@@ -58,12 +58,12 @@ body:
   - type: textarea
     attributes:
       label: Health
-      description: Attach the output of `:checkhealth plugin_template` here
+      description: Attach the output of `:checkhealth cursor_text_objects` here
       render: log
   - type: textarea
     attributes:
       label: Log
-      description: Please enable logging with `vim.g.plugin_template_configuration = {logging = {level = "debug", use_file = true}}` and attach the contents of `~/.local/share/nvim` here or call `:PluginTemplate copy-logs`
+      description: Please enable logging with `vim.g.cursor_text_objects_configuration = {logging = {level = "debug", use_file = true}}` and attach the contents of `~/.local/share/nvim` here or call `:CursorTextObjects copy-logs`
       render: log
   - type: textarea
     attributes:
@@ -77,7 +77,7 @@ body:
             spec = {
             {
                 -- Add anything you need here (configuration, other plugins, etc)
-                "ColinKennedy/nvim-best-practices-plugin-template",
+                "ColinKennedy/cursor-text-objects.nvim",
             },
         })
       render: lua
