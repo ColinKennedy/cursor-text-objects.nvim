@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.0 (2025-08-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **all:** removed git submodule history
+
+### Features
+
+* **all:** initial release ([30853c4](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/30853c4c8fcd7e037ab16a061adee16c25001012))
+* **all:** removed git submodule history ([e390137](https://github.com/ColinKennedy/cursor-text-objects.nvim/commit/e390137551eda9c0eb6aec145edc1e32d084d22c))
+
 ## [1.3.0](https://github.com/ColinKennedy/cursor-text-objects.nvim/compare/v1.2.0...v1.3.0) (2024-12-05)
 
 
