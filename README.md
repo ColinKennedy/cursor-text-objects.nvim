@@ -90,7 +90,7 @@ Give your right-pinky a workout and install `cursor-text-objects.nvim` today!
             { desc = "Run from your current cursor to the end of the text-object." }
         )
     end,
-    version = "v1.*",
+    version = "v2.*",
 }
 ```
 

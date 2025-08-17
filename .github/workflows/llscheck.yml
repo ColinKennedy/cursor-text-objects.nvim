@@ -15,16 +15,19 @@ jobs:
     name: llscheck
 
     steps:
-    - uses: actions/checkout@master
+    - name: Checkout
+      uses: actions/checkout@master
 
-    - uses: rhysd/action-setup-vim@v1
+    - name: Install Neovim
+      uses: rhysd/action-setup-vim@v1
       # NOTE: We need Neovim installed in order to expose the $VIMRUNTIME
       # environment variable
       with:
         neovim: true
         version: stable
 
-    - uses: leafo/gh-actions-lua@v10
+    - name: Install A Lua Interpreter
+      uses: leafo/gh-actions-lua@v11
       with:
         # Neovim is compiled with LuaJIT so we might as well match. But it
         # doesn't look like we can match it exactly.
@@ -40,30 +43,27 @@ jobs:
         tool_versions: |
           lua-language-server latest
 
-    - uses: leafo/gh-actions-luarocks@v4
+    - name: Install luarocks
+      # TODO: Replace with https://github.com/luarocks/gh-actions-luarocks after v6+
+      uses: ColinKennedy/gh-actions-luarocks@v1.0.0
+
+    - name: Print Versions
+      run: |
+        luarocks --version
+        lua-language-server --version
+
     - name: Install llscheck
       run: |
-        luarocks install llscheck
-        luarocks install nlua
+        luarocks --version
+        luarocks install llscheck --verbose
 
-    - name: Clone dependencies - busted
-      uses: actions/checkout@v4
-      with:
-        repository: "LuaCATS/busted"
-        path: ".dependencies/busted"
-
-    - name: Clone dependencies - luassert
-      uses: actions/checkout@v4
-      with:
-        repository: "LuaCATS/luassert"
-        path: ".dependencies/luassert"
-
-    - name: Clone dependencies - luavit-meta
-      uses: actions/checkout@v4
-      with:
-        repository: "Bilal2453/luvit-meta"
-        path: ".dependencies/luvit-meta"
-
-    - name: test
+    - name: Test
       run: |
-        VIMRUNTIME=`nlua -e 'io.write(os.getenv("VIMRUNTIME"))'` llscheck --configpath .github/workflows/.luarc.json .
+        # We use SSH in the `Makefile` but GitHub actions don't allow that. So
+        # we force git to clone using HTTP instead.
+        #
+        export GIT_CONFIG=~/.gitconfig
+        git config url."https://github.com/".insteadOf git@github.com:
+
+        # Now do the llscheck (and any git clones, as needed)
+        make llscheck CONFIGURATION=.github/workflows/.luarc.json

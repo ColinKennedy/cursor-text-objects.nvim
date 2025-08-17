@@ -1,18 +1,23 @@
 *cursor-text-objects-news.txt*
 
-Notable changes since CursorTextObjects 1.0
+Notable changes since CursorTextObjects 2.0
 
 
 ===============================================================================
 NEW FEATURES                                     *cursor-text-objects-new-features*
 
-- Added default `<Plug>` mappings
+- n/a
 
 
 ===============================================================================
 BREAKING CHANGES                                 *cursor-text-objects-new-breaking*
 
-n/a
+The git history was squashed so lazy.nvim will load the plugin properly.
+
+The original plugin history is retained in a backup branch called `v1_backup`
+and all `v1.*` tagged commits are still accessible.
+
+See: https://github.com/ColinKennedy/cursor-text-objects.nvim/issues/10
 
 
  vim:tw=78:ts=8:noet:ft=help:norl:
